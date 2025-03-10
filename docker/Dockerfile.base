@@ -33,8 +33,13 @@ ENV DOCKER_USER_HOME=${DOCKER_USER_HOME_ARG}
 # Set environment variables
 ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
+ENV MNI_KIT_ALLOW_ROOT=1
+ENV HF_ENDPOINT=https://hf-mirror.com
 
 USER root
+
+RUN sed -i 's/http:\/\/archive.ubuntu.com/http:\/\/mirrors.cloud.aliyuncs.com/g' /etc/apt/sources.list
+RUN sed -i 's/http:\/\/security.ubuntu.com/http:\/\/mirrors.cloud.aliyuncs.com/g' /etc/apt/sources.list
 
 # Install dependencies and remove cache
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -42,10 +47,19 @@ RUN --mount=type=cache,target=/var/cache/apt \
     build-essential \
     cmake \
     git \
+    vim \
+    tmux \
+    xauth \
+    openssh-server \
+    x11-apps \
     libglib2.0-0 \
     ncurses-term && \
     apt -y autoremove && apt clean autoclean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /var/run/sshd
+RUN echo "root:password" | chpasswd
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
 # Copy the Isaac Lab directory (files to exclude are defined in .dockerignore)
 COPY ../ ${ISAACLAB_PATH}
@@ -78,6 +92,9 @@ RUN touch /bin/nvidia-smi && \
     touch /etc/localtime && \
     mkdir -p /var/run/nvidia-persistenced && \
     touch /var/run/nvidia-persistenced/socket
+
+RUN ${ISAACLAB_PATH}/isaaclab.sh -p -m pip config set global.index-url http://mirrors.cloud.aliyuncs.com/pypi/simple/
+RUN ${ISAACLAB_PATH}/isaaclab.sh -p -m pip config set global.trusted-host mirrors.cloud.aliyuncs.com
 
 # installing Isaac Lab dependencies
 # use pip caching to avoid reinstalling large packages

@@ -19,3 +19,5 @@ RUN /workspace/isaaclab/_isaac_sim/python.sh -m pip install optuna bayesian-opti
 
 # Install MLflow for logging
 RUN /workspace/isaaclab/_isaac_sim/python.sh -m pip install mlflow
+
+RUN apt update && apt install -y wget

@@ -8,7 +8,7 @@ import argparse
 import ray
 from ray.util.scheduling_strategies import NodeAffinitySchedulingStrategy
 
-import source.standalone.workflows.ray.util as util
+import util
 
 """
 This script dispatches sub-job(s) (either individual jobs or tuning aggregate jobs)

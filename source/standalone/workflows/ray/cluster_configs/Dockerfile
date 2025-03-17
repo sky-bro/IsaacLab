@@ -3,7 +3,8 @@ ARG LAB_VERSION_TAG="latest"
 FROM isaac-lab-base:${LAB_VERSION_TAG}
 
 # Set NVIDIA paths
-ENV PATH="/root/miniconda3/bin:/usr/local/nvidia/bin:$PATH"
+ARG CONDA_ROOT="/root/miniconda3"
+ENV PATH="${CONDA_ROOT}/bin:/usr/local/nvidia/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64"
 
 # Link NVIDIA binaries
@@ -36,9 +37,11 @@ RUN arch=$(uname -m) && \
     fi && \
     wget $MINICONDA_URL -O miniconda.sh && \
     mkdir -p /root/.conda && \
-    bash miniconda.sh -b -p /root/miniconda3 && \
+    bash miniconda.sh -b -p ${CONDA_ROOT} && \
     rm -f miniconda.sh
 
+RUN conda init && conda config --set auto_activate_base false
+
 # export variables
-RUN echo 'export PATH="/root/anaconda3/bin:$PATH"' >> /root/.bashrc
 RUN echo "export OMNI_KIT_ALLOW_ROOT=1" >> /root/.bashrc
+RUN echo "export HF_ENDPOINT=https://hf-mirror.com" >> /root/.bashrc

@@ -106,8 +106,8 @@ RUN touch /bin/nvidia-smi && \
 RUN --mount=type=cache,target=${DOCKER_USER_HOME}/.cache/pip \
     ${ISAACLAB_PATH}/isaaclab.sh --install
 
-ARG CONDA_ROOT="${HOME}/conda"
-ENV PATH="{CONDA_ROOT}/bin:$PATH"
+ARG CONDA_ROOT="${DOCKER_USER_HOME_ARG}/conda"
+ENV PATH="${CONDA_ROOT}/bin:$PATH"
 # Install conda on x86 or ARM platforms
 RUN arch=$(uname -m) && \
     if [ "$arch" = "x86_64" ]; then \
@@ -120,7 +120,7 @@ RUN arch=$(uname -m) && \
     fi && \
     wget $CONDA_URL -O conda.sh && \
     mkdir -p ${HOME}/.conda && \
-    bash conda.sh -b -p {CONDA_ROOT} && \
+    bash conda.sh -b -p ${CONDA_ROOT} && \
     rm -f conda.sh && \
     conda init && conda config --set auto_activate_base false
 

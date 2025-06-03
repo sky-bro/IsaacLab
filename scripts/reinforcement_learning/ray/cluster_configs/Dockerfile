@@ -2,10 +2,6 @@ ARG LAB_VERSION_TAG="latest"
 
 FROM isaac-lab-base:${LAB_VERSION_TAG}
 
-# WGet is needed so that GCS or other cloud providers can mark the container as ready.
-# Otherwise the Ray liveliness checks fail.
-RUN apt-get update && apt-get install wget
-
 # Set NVIDIA paths
 ENV PATH="/usr/local/nvidia/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64"

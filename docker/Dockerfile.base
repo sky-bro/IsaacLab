@@ -55,8 +55,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
     openssh-server \
     x11-apps \
     libglib2.0-0 \
-    ncurses-term \
-    wget && \
+    iproute2 \
+    lsof \
+    sudo \
+    iputils-ping \
+    netcat \
+    ncurses-term && \
     apt -y autoremove && apt clean autoclean && \
     rm -rf /var/lib/apt/lists/*
 
